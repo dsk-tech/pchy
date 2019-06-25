@@ -12,6 +12,7 @@ class Api extends CI_Controller {
 		{
 			$_POST = json_decode(file_get_contents('php://input'), true);	
 		}
+		
    }
 	
 	public function index()
@@ -53,12 +54,12 @@ class Api extends CI_Controller {
 
 	/**
 	 * @method update patient profile
-	 * @param $userId, 
+	 * @param $userId, name, gender, dateOfBirth, mobileNo, preferredNo, address, city, state, zip, bio
 	 * @return json object
 	 * @since 2019-06-21
 	 * @author khunti haresh <khuntiharesh@gmail.com>
 	 **/
-	 public function getUpdatePatientProfile()
+	 public function UpdatePatientProfile()
 	 {
 	 	checkAuthToken();
 
@@ -72,22 +73,48 @@ class Api extends CI_Controller {
 	 	$this->form_validation->set_rules('city', 'City', 'required');
 	 	$this->form_validation->set_rules('state', 'State', 'required');
 	 	$this->form_validation->set_rules('zip', 'Zip', 'required');
-	 	$this->form_validation->set_rules('bio', 'Bio', 'required');
+	 	//$this->form_validation->set_rules('bio', 'Bio', 'required');
 
 		
-		/*if ($this->form_validation->run() == FALSE)
+		if ($this->form_validation->run() == FALSE)
         {
-        	response("Parameters are missing", 400);
+        	response(validation_errors(), 400);
         } else {
-        	$this->db->where("id", $this->input->post('userId'));
-        	$resultData = $this->db->get("patient_profile")->row();
-        	if (!empty($resultData)) {
-        		response("Detail listed successfully", 200, ['data' => $resultData]);
-        	} else {
-        		response("Detail not found", 400);
+        	$profileData = [
+        		"date_of_birth" => $this->input->post('dateOfBirth'),
+        		"address1"      => $this->input->post('address'),
+        		"city"          => $this->input->post('city'),
+        		"state"         => $this->input->post('state'),
+        		"pin_code"      => $this->input->post('zip'),
+        		"mobile_no"      => $this->input->post('mobileNo')
+        	];
+
+        	$userData = [
+        		"name" 		=> $this->input->post('name'),
+        		"gender"    => $this->input->post('gender'),
+        		"phone"     => $this->input->post('preferredNo')
+        	];
+
+        	$imageUpload = $this->upload_image('image');
+        	if ($imageUpload['status']) {
+        		$profileData["profile_image"] = $imageUpload['data'];
+        	} elseif (!$imageUpload['status']) {
+        		response($imageUpload['data'], 400);
         	}
-        	echo '<pre>'; print_r($resultData); exit();
-        }*/
+
+        	$this->db->where("user_id", $this->input->post('userId'));
+        	$profileUpdate = $this->db->update('patient_profile', $profileData);
+
+        	$this->db->where("id", $this->input->post('userId'));
+        	$userUpdate = $this->db->update('users', $userData);
+        	
+
+        	if ($profileUpdate && $userUpdate) {
+        		response("Profile updated successfully", 200);
+        	} else {
+        		response("Profile can't be updated. Please try again", 400);
+        	}
+        }
 	 }
 
 	 /**
@@ -187,6 +214,27 @@ class Api extends CI_Controller {
         
 	}	
 
+
+
+	//common image upload function
+	function upload_image($file_name, $required = false)
+	{
+		$this->load->library('upload');
+		$this->upload->initialize(img_file_cinfig());
+
+		if(!$this->upload->do_upload($file_name,FALSE))
+		{
+		    if($_FILES[$file_name]['error'] != 4 || $required)
+		    {
+		        return ["status" => false, "data" => $file_name." ".$this->upload->display_errors()]; 
+			}
+
+		} else {
+		    $image = $this->upload->data();
+		    return ["status" => true, "data" => $image["file_name"]]; 
+		}
+		return '';
+	}
 
 	/*public function getDoctoProfile()
 	{

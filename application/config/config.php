@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost:8080/psychonline_staging/';
+$config['base_url'] = 'http://localhost:8080/psychonline/pchy/';
 
 define('ENC_KEY','4444444444444444444444');
 /*

@@ -69,6 +69,18 @@ function my_encrypt($data)
 	{
 		return false;
 	}
+
 }
+
+function img_file_cinfig()
+{
+     return array(
+               'upload_path' => "./assets/uploads",
+               'allowed_types' => "gif|jpg|png|jpeg|pdf|docx",
+               'overwrite' => TRUE,
+               'max_size' => "2000", // Can be set to particular file size , here it is 2 MB(2048 Kb)
+               );
+}
+
 
 ?>
