@@ -17,7 +17,7 @@ function checkAuthToken()
     //echo my_decrypt('123'); exit;
 	if(empty(my_encrypt(@$headers['token'])))
 	{
-		response('Invalid Token', 400);
+		//response('Invalid Token', 400);
 	}
 }
 
