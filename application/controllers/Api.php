@@ -86,7 +86,8 @@ class Api extends CI_Controller {
         		"city"          => $this->input->post('city'),
         		"state"         => $this->input->post('state'),
         		"pin_code"      => $this->input->post('zip'),
-        		"mobile_no"      => $this->input->post('mobileNo')
+        		"mobile_no"      => $this->input->post('mobileNo'),
+			"gender"    => $this->input->post('gender')
         	];
 
         	$userData = [
